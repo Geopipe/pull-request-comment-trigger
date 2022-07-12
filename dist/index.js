@@ -14761,7 +14761,7 @@ async function run() {
 
     if (context.eventName === "issue_comment") {
         if (context.payload.issue.pull_request) {
-            const pull_url = context.payload.issue.pull_request;
+            const pull_url = context.payload.issue.pull_request.url;
             const pull_number_index = pull_url.lastIndexOf('/')
             if(-1 === pull_number_index) {
                 core.setFailed("Invalid pull request URL extracted from issue_comment")
