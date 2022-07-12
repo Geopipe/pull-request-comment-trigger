@@ -9,17 +9,19 @@ jobs:
   hello:
     runs-on: ubuntu-latest
     steps:
-      - uses: khan/pull-request-comment-trigger@master
+      - uses: geopipe/pull-request-comment-trigger@feature/expose-pr-info
         id: check
         with:
           trigger: '#hello'
-      - run: 'echo Found it!'
+      - run: 'echo "${PULL_REQUEST_INFO}"'
         if: steps.check.outputs.triggered == 'true'
+        env: 
+          PULL_REQUEST_INFO: ${{ steps.check.outputs.pull_request }}
 
   eyes:
     runs-on: ubuntu-latest
     steps:
-      - uses: khan/pull-request-comment-trigger@master
+      - uses: geopipe/pull-request-comment-trigger@feature/expose-pr-info
         id: check
         with:
           trigger: '#look'
@@ -32,7 +34,7 @@ jobs:
   rocket:
     runs-on: ubuntu-latest
     steps:
-      - uses: khan/pull-request-comment-trigger@master
+      - uses: geopipe/pull-request-comment-trigger@feature/expose-pr-info
         id: check
         with:
           trigger: '#deploy'
