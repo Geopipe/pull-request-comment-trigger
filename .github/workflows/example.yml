@@ -1,7 +1,7 @@
 name: Pull Request Comment Trigger Example
 on:
   pull_request:
-    types: [opened]
+    types: [opened, edited]
   issue_comment:
     types: [created]
 
