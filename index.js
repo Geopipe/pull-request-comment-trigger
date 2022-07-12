@@ -25,6 +25,8 @@ async function run() {
     core.setOutput('comment_body', body);
 
     const client = new GitHub(GITHUB_TOKEN);
+    const { owner, repo } = context.repo;
+
 
     if (context.eventName === "issue_comment") {
         if (context.payload.issue.pull_request) {
@@ -49,9 +51,6 @@ async function run() {
     } else {
         core.setOutput("pull_request", context.payload.pull_request);
     }
-
-    const { owner, repo } = context.repo;
-
 
     const prefixOnly = core.getInput("prefix_only") === 'true';
     if ((prefixOnly && !body.startsWith(trigger)) || !body.includes(trigger)) {
