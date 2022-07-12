@@ -1,11 +1,14 @@
 #!/usr/bin/env node
 
 const core = require("@actions/core");
+// Context is populated by environment variables
+// cf. https://github.com/actions/toolkit/blob/2b97eb3192ed27ad81a555e87f3f9de61c11a213/packages/github/src/context.ts#L28-L53
 const { context, GitHub } = require("@actions/github");
 
 async function run() {
+    // testing note: set by environment variable INPUT_TRIGGER
     const trigger = core.getInput("trigger", { required: true });
-
+    // testing note: set by environment variable INPUT_REACTION
     const reaction = core.getInput("reaction");
     const { GITHUB_TOKEN } = process.env;
     if (reaction && !GITHUB_TOKEN) {
