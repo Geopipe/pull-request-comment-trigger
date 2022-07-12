@@ -13,6 +13,8 @@ jobs:
         id: check
         with:
           trigger: '#hello'
+        env:
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
       - run: 'echo "${PULL_REQUEST_INFO}"'
         if: steps.check.outputs.triggered == 'true'
         env: 
