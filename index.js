@@ -11,6 +11,9 @@ async function run() {
     if (reaction && !GITHUB_TOKEN) {
         core.setFailed('If "reaction" is supplied, GITHUB_TOKEN is required');
         return;
+    } else if (context.eventName !== "issue_comment" && context.eventName !== "pull_request") {
+        core.setFailed("eventName must be issue_comment or pull_request");
+        return;
     }
 
     const body =
@@ -21,13 +24,30 @@ async function run() {
             : context.payload.pull_request.body) || '';
     core.setOutput('comment_body', body);
 
-    if (
-        context.eventName === "issue_comment" &&
-        !context.payload.issue.pull_request
-    ) {
-        // not a pull-request comment, aborting
-        core.setOutput("triggered", "false");
-        return;
+    const client = new GitHub(GITHUB_TOKEN);
+
+    if (context.eventName === "issue_comment") {
+        if (context.payload.issue.pull_request) {
+            const pull_url = context.payload.issue.pull_request;
+            const pull_number_index = pull_url.lastIndexOf('/')
+            if(-1 === pull_number_index) {
+                core.setFailed("Invalid pull request URL extracted from issue_comment")
+                return;
+            } else {
+                const pull_number = parseInt(pull_url.substring(1 + pull_number_index));
+                core.setOutput("pull_request", await client.pulls.get({
+                    owner,
+                    repo,
+                    pull_number,
+                }));
+            }
+        } else {
+            // not a pull-request comment, aborting
+            core.setOutput("triggered", "false");
+            return;
+        }
+    } else {
+        core.setOutput("pull_request", context.payload.pull_request);
     }
 
     const { owner, repo } = context.repo;
@@ -40,12 +60,11 @@ async function run() {
     }
 
     core.setOutput("triggered", "true");
-
+    
     if (!reaction) {
         return;
     }
 
-    const client = new GitHub(GITHUB_TOKEN);
     if (context.eventName === "issue_comment") {
         await client.reactions.createForIssueComment({
             owner,
