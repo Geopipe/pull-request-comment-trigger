@@ -14784,7 +14784,7 @@ async function run() {
     }
 
     if(failUnmergeable && context.payload.pull_request.mergeable != true) {
-        core.setFailed("The pull request was not in a mergeable state");
+        core.setFailed("The pull request was not in a mergeable state, expected 'true' and got " + context.payload.pull_request.mergeable);
         return;
     } else {
         core.setOutput("pull_request", context.payload.pull_request);
