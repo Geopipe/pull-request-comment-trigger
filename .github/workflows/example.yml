@@ -34,7 +34,7 @@ jobs:
           name: Test XYZ
           conclusion: ${{ job.status }}
           output: |
-            {"summary":${{ steps.echo_json.outputs.summary || "yo ho" }}}
+            {"summary":${{ steps.echo_json.outputs.summary || 'yo ho' }}}
           sha: ${{ fromJSON(steps.check.outputs.pull_request).head.sha }}
 
   eyes:
