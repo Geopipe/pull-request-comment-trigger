@@ -17,6 +17,8 @@ outputs:
     description: the string 'true' if the trigger was found, otherwise the string 'false'
   comment_body:
     description: The comment body.
+  pull_request:
+    description: 'A pull_request object as described at https://docs.github.com/en/rest/pulls/pulls#get-a-pull-request'
 runs:
   using: 'node12'
   main: 'dist/index.js'
