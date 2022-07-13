@@ -12,6 +12,10 @@ inputs:
     description: If 'true', the trigger must match the start of the comment.
     required: false
     default: "false"
+  fail_if_not_mergeable:
+    description: If 'true', and the PR is not in a mergeable state, the action will fail.
+    required: false
+    default: "true"
 outputs:
   triggered:
     description: the string 'true' if the trigger was found, otherwise the string 'false'
