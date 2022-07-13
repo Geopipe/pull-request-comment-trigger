@@ -60,6 +60,23 @@ async function run() {
             core.setOutput("triggered", "false");
             return;
         }
+    } else if (failUnmergeable) {
+        // For whatever reason the PR objects embedded in pull_request and pull_request_review_comment payloads are incomplete
+        // in particular - they don't have the mergeable field we need to implement failUnmergeable, so we will extract their number
+        // and then poll that endpoint directly
+        const pull_number = context.payload.pull_request.number;
+        const pull_response = await client.pulls.get({
+            owner,
+            repo,
+            pull_number,
+        });
+
+        if (pull_response.status == 200) {
+            context.payload.pull_request = pull_response.data;
+        } else {
+            core.setFailed("Failed to obtain response from server");
+            return
+        }
     }
 
     core.setOutput("pull_request", context.payload.pull_request);
