@@ -14738,6 +14738,8 @@ async function run() {
     const trigger = core.getInput("trigger", { required: true });
     // testing note: set by environment variable INPUT_REACTION
     const reaction = core.getInput("reaction");
+    // testing note: set by environment variable INPUT_FAIL_IF_NOT_MERGEABLE
+    const failUnmergeable = core.getInput("fail_if_not_mergeable")
     const { GITHUB_TOKEN } = process.env;
     if (reaction && !GITHUB_TOKEN) {
         core.setFailed('If "reaction" is supplied, GITHUB_TOKEN is required');
@@ -14768,20 +14770,26 @@ async function run() {
                 return;
             } else {
                 const pull_number = parseInt(pull_url.substring(1 + pull_number_index));
-                core.setOutput("pull_request", await client.pulls.get({
+                context.payload.pull_request = await client.pulls.get({
                     owner,
                     repo,
                     pull_number,
-                }));
+                });
             }
         } else {
             // not a pull-request comment, aborting
             core.setOutput("triggered", "false");
             return;
         }
+    }
+
+    if(failUnmergeable && context.payload.pull_request.mergeable != true) {
+        core.setFailed("The pull request was not in a mergeable state");
+        return;
     } else {
         core.setOutput("pull_request", context.payload.pull_request);
     }
+    
 
     const prefixOnly = core.getInput("prefix_only") === 'true';
     if ((prefixOnly && !body.startsWith(trigger)) || !body.includes(trigger)) {
