@@ -1,7 +1,9 @@
 name: Pull Request Comment Trigger Example
 on:
   pull_request:
-    types: [opened, edited]
+    types: [opened, edited, reopened]
+  pull_request_review_comment:
+    types: [created]
   issue_comment:
     types: [created]
 
@@ -13,21 +15,32 @@ jobs:
   hello:
     runs-on: ubuntu-latest
     steps:
-      - uses: geopipe/pull-request-comment-trigger@feature/expose-pr-info
+      - uses: geopipe/pull-request-comment-trigger@feature/handle-review-comments
         id: check
         with:
           trigger: '#hello'
+          reaction: eyes
+          fail_if_not_mergeable: true
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
       - run: 'echo "${PULL_REQUEST_INFO}"'
+        id: echo_json
         if: steps.check.outputs.triggered == 'true'
         env: 
           PULL_REQUEST_INFO: ${{ steps.check.outputs.pull_request }}
+      - uses: LouisBrunner/checks-action@v1.2.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: Test XYZ
+          conclusion: ${{ job.status }}
+          output: |
+            {"summary":${{ steps.echo_json.outputs.summary }}}
+          sha: ${{ fromJSON(steps.check.outputs.pull_request).head.sha }}
 
   eyes:
     runs-on: ubuntu-latest
     steps:
-      - uses: geopipe/pull-request-comment-trigger@feature/expose-pr-info
+      - uses: geopipe/pull-request-comment-trigger@feature/handle-review-comments
         id: check
         with:
           trigger: '#look'
@@ -40,7 +53,7 @@ jobs:
   rocket:
     runs-on: ubuntu-latest
     steps:
-      - uses: geopipe/pull-request-comment-trigger@feature/expose-pr-info
+      - uses: geopipe/pull-request-comment-trigger@feature/handle-review-comments
         id: check
         with:
           trigger: '#deploy'
