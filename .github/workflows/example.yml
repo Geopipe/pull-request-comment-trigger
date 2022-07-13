@@ -15,7 +15,7 @@ jobs:
   hello:
     runs-on: ubuntu-latest
     steps:
-      - uses: geopipe/pull-request-comment-trigger@feature/expose-pr-info
+      - uses: geopipe/pull-request-comment-trigger@feature/handle-review-comments
         id: check
         with:
           trigger: '#hello'
@@ -29,7 +29,7 @@ jobs:
   eyes:
     runs-on: ubuntu-latest
     steps:
-      - uses: geopipe/pull-request-comment-trigger@feature/expose-pr-info
+      - uses: geopipe/pull-request-comment-trigger@feature/handle-review-comments
         id: check
         with:
           trigger: '#look'
@@ -42,7 +42,7 @@ jobs:
   rocket:
     runs-on: ubuntu-latest
     steps:
-      - uses: geopipe/pull-request-comment-trigger@feature/expose-pr-info
+      - uses: geopipe/pull-request-comment-trigger@feature/handle-review-comments
         id: check
         with:
           trigger: '#deploy'
