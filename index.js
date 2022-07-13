@@ -105,11 +105,18 @@ async function run() {
             comment_id: context.payload.comment.id,
             content: reaction
         });
-    } else {
+    } else if (context.eventName === "pull_request") {
         await client.reactions.createForIssue({
             owner,
             repo,
             issue_number: context.payload.pull_request.number,
+            content: reaction
+        });
+    } else if (context.eventName === "pull_request_review_comment") {
+        await client.reactions.createForPullRequestReviewComment({
+            owner,
+            repo,
+            comment_id: context.payload.comment.id,
             content: reaction
         });
     }
