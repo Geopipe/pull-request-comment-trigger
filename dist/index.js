@@ -14765,16 +14765,23 @@ async function run() {
         if (context.payload.issue.pull_request) {
             const pull_url = context.payload.issue.pull_request.url;
             const pull_number_index = pull_url.lastIndexOf('/')
-            if(-1 === pull_number_index) {
+            if (-1 === pull_number_index) {
                 core.setFailed("Invalid pull request URL extracted from issue_comment")
                 return;
             } else {
                 const pull_number = parseInt(pull_url.substring(1 + pull_number_index));
-                context.payload.pull_request = await client.pulls.get({
+                const pull_response = await client.pulls.get({
                     owner,
                     repo,
                     pull_number,
                 });
+
+                if (pull_response.status == 200) {
+                    context.payload.pull_request = pull_response.data;
+                } else {
+                    core.setFailed("Failed to obtain response from server");
+                    return
+                }
             }
         } else {
             // not a pull-request comment, aborting
