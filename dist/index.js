@@ -14742,13 +14742,13 @@ async function run() {
     if (reaction && !GITHUB_TOKEN) {
         core.setFailed('If "reaction" is supplied, GITHUB_TOKEN is required');
         return;
-    } else if (context.eventName !== "issue_comment" && context.eventName !== "pull_request") {
-        core.setFailed("eventName must be issue_comment or pull_request");
+    } else if (context.eventName !== "issue_comment" && context.eventName !== "pull_request" && context.eventName !== "pull_request_review_comment") {
+        core.setFailed("eventName must be issue_comment or pull_request or pull_request_review_comment");
         return;
     }
 
     const body =
-        (context.eventName === "issue_comment"
+        ((context.eventName === "issue_comment" || context.eventName === "pull_request_review_comment")
         // For comments on pull requests
             ? context.payload.comment.body
             // For the initial pull request description
